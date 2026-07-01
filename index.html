@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cinta Sejati Untukmu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'script': ['Dancing Script', 'cursive'],
+                        'sans': ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'magenta': '#9d005f',
+                        'purple-deep': '#2a0033',
+                    },
+                    animation: {
+                        'float': 'float 15s linear infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'burst': 'burst 1s forwards',
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'slide-up': 'slideUp 0.6s ease-out forwards',
+                        'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%': { transform: 'translateY(100vh) rotate(0deg)', opacity: '0' },
+                            '10%': { opacity: '0.6' },
+                            '90%': { opacity: '0.6' },
+                            '100%': { transform: 'translateY(-100px) rotate(360deg)', opacity: '0' },
+                        },
+                        burst: {
+                            '0%': { transform: 'scale(1)', opacity: '1' },
+                            '50%': { transform: 'scale(1.5)', opacity: '0.8' },
+                            '100%': { transform: 'scale(3)', opacity: '0' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(50px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        shake: {
+                            '10%, 90%': { transform: 'translate3d(-2px, 0, 0)' },
+                            '20%, 80%': { transform: 'translate3d(4px, 0, 0)' },
+                            '30%, 50%, 70%': { transform: 'translate3d(-6px, 0, 0)' },
+                            '40%, 60%': { transform: 'translate3d(6px, 0, 0)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { margin: 0; background-color: #0f0f13; }
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+        .screen-panel {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column;
+            transition: opacity 0.5s ease;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .gift-box-wrapper {
+            position: relative;
+            width: 140px; height: 140px;
+            background: #ff4785;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .gift-box-wrapper:active { transform: scale(0.95); }
+        .ribbon-h {
+            position: absolute; top: 50%; left: 0; width: 100%; height: 24px;
+            background: #ffcc00; transform: translateY(-50%);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .ribbon-v {
+            position: absolute; top: 0; left: 50%; width: 24px; height: 100%;
+            background: #ffcc00; transform: translateX(-50%);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .bow {
+            position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
+            width: 60px; height: 40px;
+        }
+        .bow::before, .bow::after {
+            content: ''; position: absolute; width: 40px; height: 30px;
+            background: #ffcc00; border-radius: 50px 50px 0 50px;
+            top: 10px;
+        }
+        .bow::before { left: -15px; transform: rotate(-30deg); box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1); }
+        .bow::after { right: -15px; transform: rotate(30deg) scaleX(-1); box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1); }
+        .bow-center {
+            position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
+            width: 20px; height: 20px; background: #e6b800; border-radius: 50%; z-index: 10;
+        }
+
+        .particle {
+            position: absolute;
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+        }
+    </style>
+</head>
+
+<body class="font-sans text-white flex items-center justify-center min-h-screen p-0 sm:p-4 selection:bg-pink-500 selection:text-white" onclick="forcePlayMusic()" ontouchstart="forcePlayMusic()">
+
+    <!-- Background Music -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="The Black Skirts - EVERYTHING.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Phone Mockup Container -->
+    <div class="relative w-full h-[100dvh] sm:w-[390px] sm:h-[844px] bg-gradient-to-br from-magenta via-purple-900 to-purple-deep sm:rounded-[3rem] sm:border-[8px] sm:border-gray-800 overflow-hidden shadow-2xl isolate">
+        
+        <!-- Rose Transition Overlay (Canvas) -->
+        <div id="rose-transition-overlay" class="absolute inset-0 z-50 pointer-events-none opacity-0 transition-opacity duration-300">
+            <canvas id="rose-transition-canvas" class="w-full h-full"></canvas>
+        </div>
+
+        <!-- Floating Background Flowers -->
+        <div id="bg-flowers" class="absolute inset-0 overflow-hidden pointer-events-none z-0">
+            <!-- Populated by JS -->
+        </div>
+
+        <!-- APP CONTENT AREA -->
+        <div class="relative w-full h-full pt-8 z-10">
+
+            <!-- SCREEN 1: Loading -->
+            <div id="screen-loading" class="screen-panel justify-center items-center px-8 z-40">
+                <div class="animate-pulse-slow flex flex-col items-center">
+                    <span class="text-7xl mb-6 drop-shadow-[0_0_15px_rgba(255,105,180,0.8)]">🌸</span>
+                    <p class="text-center text-lg font-light leading-relaxed text-pink-100">
+                        Menyiapkan sesuatu yang spesial untukmu Jessica...
+                    </p>
+                </div>
+            </div>
+
+            <!-- SCREEN 2: Passcode (6 Digits) -->
+            <div id="screen-passcode" class="screen-panel justify-center items-center px-6 hidden z-40 bg-black/40 backdrop-blur-md">
+                <div class="w-full max-w-sm">
+                    <div class="text-center mb-6">
+                        <h2 class="text-3xl font-script text-pink-300 mb-2">Teruntuk Jessica</h2>
+                        <p class="text-sm font-light text-gray-200">Masukkan tanggal spesial kita</p>
+                    </div>
+
+                    <!-- 6 Dots indicator -->
+                    <div id="passcode-container" class="flex justify-center gap-3 mb-8 h-4">
+                        <div class="w-3 h-3 rounded-full border-2 border-pink-400 passcode-dot transition-all duration-300"></div>
+                        <div class="w-3 h-3 rounded-full border-2 border-pink-400 passcode-dot transition-all duration-300"></div>
+                        <div class="w-3 h-3 rounded-full border-2 border-pink-400 passcode-dot transition-all duration-300"></div>
+                        <div class="w-3 h-3 rounded-full border-2 border-pink-400 passcode-dot transition-all duration-300"></div>
+                        <div class="w-3 h-3 rounded-full border-2 border-pink-400 passcode-dot transition-all duration-300"></div>
+                        <div class="w-3 h-3 rounded-full border-2 border-pink-400 passcode-dot transition-all duration-300"></div>
+                    </div>
+
+                    <!-- Keypad -->
+                    <div class="grid grid-cols-3 gap-y-4 gap-x-6 max-w-[240px] mx-auto">
+                        <button onclick="pressKey(1)" class="w-14 h-14 rounded-full glass-panel text-2xl font-light hover:bg-pink-500/30 active:scale-95 transition">1</button>
+                        <button onclick="pressKey(2)" class="w-14 h-14 rounded-full glass-panel text-2xl font-light hover:bg-pink-500/30 active:scale-95 transition">2</button>
+                        <button onclick="pressKey(3)" class="w-14 h-14 rounded-full glass-panel text-2xl font-light hover:bg-pink-500/30 active:scale-95 transition">3</button>
+                        <button onclick="pressKey(4)" class="w-14 h-14 rounded-full glass-panel text-2xl font-light hover:bg-pink-500/30 active:scale-95 transition">4</button>
+                        <button onclick="pressKey(5)" class="w-14 h-14 rounded-full glass-panel text-2xl font-light hover:bg-pink-500/30 active:scale-95 transition">5</button>
+                        <button onclick="pressKey(6)" class="w-14 h-14 rounded-full glass-panel text-2xl font-light hover:bg-pink-500/30 active:scale-95 transition">6</button>
+                        <button onclick="pressKey(7)" class="w-14 h-14 rounded-full glass-panel text-2xl font-light hover:bg-pink-500/30 active:scale-95 transition">7</button>
+                        <button onclick="pressKey(8)" class="w-14 h-14 rounded-full glass-panel text-2xl font-light hover:bg-pink-500/30 active:scale-95 transition">8</button>
+                        <button onclick="pressKey(9)" class="w-14 h-14 rounded-full glass-panel text-2xl font-light hover:bg-pink-500/30 active:scale-95 transition">9</button>
+                        <div></div>
+                        <button onclick="pressKey(0)" class="w-14 h-14 rounded-full glass-panel text-2xl font-light hover:bg-pink-500/30 active:scale-95 transition">0</button>
+                        <button onclick="clearKey()" class="w-14 h-14 rounded-full flex items-center justify-center text-xl hover:bg-white/10 active:scale-95 transition text-pink-300">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2h-8.172a2 2 0 00-1.414.586L3 12z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREEN 3: Gift Box -->
+            <div id="screen-gift" class="screen-panel justify-center items-center flex-col hidden z-30">
+                <div id="gift-interaction" class="flex flex-col items-center gap-12">
+                    <div class="gift-box-wrapper animate-[slideUp_0.8s_ease-out]" onclick="openGift()">
+                        <div class="ribbon-h"></div>
+                        <div class="ribbon-v"></div>
+                        <div class="bow">
+                            <div class="bow-center"></div>
+                        </div>
+                    </div>
+                    <p class="text-xl font-light text-pink-100 text-center px-8 animate-[fadeIn_1.5s_ease-out]">
+                        Ketuk kotak hadiah untuk membukanya!😼
+                    </p>
+                </div>
+            </div>
+
+            <!-- SCREEN 4: Burst Transition -->
+            <div id="screen-transition" class="screen-panel justify-center items-center hidden z-30">
+                <div id="burst-center" class="relative w-full h-full flex justify-center items-center">
+                    <div id="light-burst" class="absolute w-20 h-20 bg-pink-400 rounded-full blur-[50px] opacity-0 transition-opacity duration-500"></div>
+                    <p class="absolute bottom-32 text-2xl font-script text-pink-200 animate-pulse">Membuka hadiahmu...</p>
+                </div>
+            </div>
+
+            <!-- SCREEN 5: Main Greeting & Letters -->
+            <div id="screen-main" class="screen-panel hidden overflow-y-auto overflow-x-hidden z-20 pb-20 no-scrollbar">
+                
+                <!-- Greeting Header -->
+                <div class="flex flex-col items-center justify-center pt-8 pb-12 px-6 animate-[slideUp_1s_ease-out_0.2s_both]">
+                    <h2 class="text-lg tracking-[0.3em] text-pink-300 uppercase mb-2">Cinta Sejati</h2>
+                    <h1 class="text-6xl font-script text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-white to-pink-200 mb-4 drop-shadow-md text-center leading-tight">
+                        I Love<br>Jessica
+                    </h1>
+                    <p class="text-xl font-light italic text-pink-200">Dari Elvan 😼</p>
+                </div>
+
+                <!-- Interactive Bouquet -->
+                <div class="w-full px-4 mb-12 animate-[slideUp_1s_ease-out_0.4s_both]">
+                    <div class="glass-panel rounded-3xl p-6 relative overflow-hidden">
+                        <div class="absolute -right-10 -top-10 w-32 h-32 bg-pink-500/20 blur-3xl rounded-full"></div>
+                        <h3 class="text-2xl font-script text-center text-pink-200 mb-6">A Digital Bouquet</h3>
+                        
+                        <!-- Bouquet Area -->
+                        <div class="relative w-full h-64 bg-black/20 rounded-2xl border border-white/5 flex justify-center items-end pb-8">
+                            <div class="absolute bottom-0 w-1 h-32 bg-green-800/60 rotate-[-15deg] left-[35%] rounded-t-full"></div>
+                            <div class="absolute bottom-0 w-1 h-40 bg-green-700/60 left-[50%] rounded-t-full"></div>
+                            <div class="absolute bottom-0 w-1 h-32 bg-green-800/60 rotate-[15deg] right-[35%] rounded-t-full"></div>
+                            <div class="absolute bottom-0 w-8 h-12 bg-pink-900/40 rounded-t-xl z-20 blur-[2px]"></div>
+
+                            <button onclick="showFlowerPopup('rose')" class="absolute bottom-20 left-[20%] text-6xl hover:scale-125 transition-transform duration-300 origin-bottom z-30 drop-shadow-[0_0_10px_rgba(255,0,0,0.3)]">
+                                🌹
+                            </button>
+                            <button onclick="showFlowerPopup('tulip')" class="absolute bottom-32 left-[45%] text-7xl hover:scale-125 transition-transform duration-300 origin-bottom z-30 drop-shadow-[0_0_10px_rgba(255,105,180,0.3)]">
+                                🌷
+                            </button>
+                            <button onclick="showFlowerPopup('daisy')" class="absolute bottom-20 right-[20%] text-6xl hover:scale-125 transition-transform duration-300 origin-bottom z-30 drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">
+                                🌼
+                            </button>
+
+                            <p class="absolute bottom-2 text-xs text-white/40 italic">Ketuk bunga untuk membaca pesan</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Full Love Letter Section -->
+                <div class="w-full px-4 mb-8 animate-[slideUp_1s_ease-out_0.6s_both]">
+                    <div class="glass-panel rounded-3xl p-6 relative">
+                        <div class="flex justify-between items-end border-b border-white/10 pb-4 mb-4">
+                            <h3 class="text-2xl font-script text-pink-300">Surat Untukmu</h3>
+                            <span class="text-xs text-gray-400 font-mono">1 Juli 2026</span>
+                        </div>
+                        
+                        <!-- Updated Custom Text -->
+                        <div class="text-sm font-light leading-loose text-gray-100 space-y-4">
+                            <p>teruntuk Jessica tersayang,</p>
+                            <p>
+                                aku pernah merasa kesepian dan merasa bahwa tidak ada lagi yang akan menyayangi ku, entah kenapa dunia mempertemukanku dengan mu dan saat ini aku bersyukur kepada Tuhan, karena di hari yang paling istimewa ini, aku ingin Dunia tahu betapa berartinya kamu bagiku.
+                            </p>
+                            <p>
+                                Setiap detik bersamamu adalah kesenangan bagi ku. Senyummu adalah cahaya terindah di mata ku. Kamu bukan hanya orang yang ku sayangi, tapi kau juga adalah Cinta dan separuh jiwa ku.
+                            </p>
+                            <p>
+                                Terima kasih telah menjadi dirimu sendiri yang luar biasa, dengan semua kebaikan dan kelembutanmu. Aku sungguh sungguh mencintaimu. 😼
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="h-12 w-full"></div>
+            </div>
+
+        </div>
+
+        <!-- Flower Message Popup Modal -->
+        <div id="popup-modal" class="absolute inset-0 z-50 flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+            <div class="glass-panel w-full max-w-sm rounded-3xl p-8 transform scale-95 transition-transform duration-300 flex flex-col items-center text-center relative" id="popup-content">
+                <button onclick="closePopup()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+                <div id="popup-icon" class="text-6xl mb-4">🌺</div>
+                <p id="popup-text" class="text-lg font-light leading-relaxed text-pink-50"></p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const targetPasscode = "300726";
+        let passcode = '';
+        const dots = document.querySelectorAll('.passcode-dot');
+
+        const flowerMessages = {
+            'rose': {
+                icon: '🌹',
+                text: 'Kamu seindah mawar ini - membahagiakan hariku, setiap hari.'
+            },
+            'daisy': {
+                icon: '🌼',
+                text: 'Daisy ini mengingatkanku pada senyum cerahmu.'
+            },
+            'tulip': {
+                icon: '🌷',
+                text: 'Seperti tulip yang mekar di musim semi, kamu membawa warna baru dalam hidupku.'
+            }
+        };
+
+        // Rose Transition Canvas Setup
+        const transCanvas = document.getElementById('rose-transition-canvas');
+        const transCtx = transCanvas.getContext('2d');
+        let petals = [];
+        let transAnimationId = null;
+
+        function resizeCanvas() {
+            transCanvas.width = transCanvas.offsetWidth;
+            transCanvas.height = transCanvas.offsetHeight;
+        }
+
+        // Petal Class for Canvas Sweep
+        class RosePetal {
+            constructor() {
+                this.x = Math.random() * transCanvas.width;
+                // Start above or scattered
+                this.y = -50 - Math.random() * 100;
+                this.size = 10 + Math.random() * 15;
+                this.speedX = -2 + Math.random() * 4 + 8; // Strong sweep rightward
+                this.speedY = 4 + Math.random() * 6;
+                this.rotation = Math.random() * Math.PI * 2;
+                this.rotationSpeed = (Math.random() - 0.5) * 0.2;
+                this.opacity = 1;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.rotation += this.rotationSpeed;
+            }
+
+            draw(ctx) {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+                ctx.beginPath();
+                
+                // Draw elegant curved petal shape
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(-this.size, -this.size * 1.5, -this.size * 2, -this.size * 0.5, 0, this.size * 1.5);
+                ctx.bezierCurveTo(this.size * 2, -this.size * 0.5, this.size, -this.size * 1.5, 0, 0);
+                
+                // Radial gradient for 3D rose color depth
+                const grad = ctx.createRadialGradient(0, 0, 1, 0, 0, this.size * 1.5);
+                grad.addColorStop(0, '#f43f5e'); // rose-500
+                grad.addColorStop(0.6, '#be123c'); // rose-700
+                grad.addColorStop(1, '#4c0519'); // rose-950
+                
+                ctx.fillStyle = grad;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // Execute Rose Transition Sequence
+        function triggerRoseTransition(nextScreenCallback) {
+            const overlay = document.getElementById('rose-transition-overlay');
+            resizeCanvas();
+            petals = [];
+            
+            // Populate lots of petals for thick gorgeous sweep
+            for (let i = 0; i < 70; i++) {
+                const petal = new RosePetal();
+                // scatter their starting positions dynamically across left boundary
+                petal.x = -Math.random() * transCanvas.width * 0.8;
+                petal.y = Math.random() * transCanvas.height * 1.2 - (transCanvas.height * 0.2);
+                petals.push(petal);
+            }
+
+            overlay.classList.remove('opacity-0', 'pointer-events-none');
+            overlay.classList.add('opacity-100');
+
+            let frame = 0;
+            const duration = 90; // frames (~1.5s)
+
+            function animateTransition() {
+                transCtx.clearRect(0, 0, transCanvas.width, transCanvas.height);
+                
+                // Draw and update petals
+                petals.forEach(p => {
+                    p.update();
+                    p.draw(transCtx);
+                });
+
+                frame++;
+
+                // Swap actual page view halfway through when screen is covered with petals
+                if (frame === 25) {
+                    nextScreenCallback();
+                }
+
+                if (frame < duration) {
+                    transAnimationId = requestAnimationFrame(animateTransition);
+                } else {
+                    // Smoothly fade out transition overlay
+                    overlay.classList.remove('opacity-100');
+                    overlay.classList.add('opacity-0', 'pointer-events-none');
+                    cancelAnimationFrame(transAnimationId);
+                }
+            }
+
+            animateTransition();
+        }
+
+        // Floating Background Flowers generator
+        function initBackgroundFlowers() {
+            const container = document.getElementById('bg-flowers');
+            const flowers = ['🌸', '🌺', '✨', '💛', '🌹'];
+            for(let i=0; i<15; i++) {
+                const el = document.createElement('div');
+                el.innerText = flowers[Math.floor(Math.random() * flowers.length)];
+                el.className = 'absolute text-xl md:text-3xl opacity-0 animate-float';
+                el.style.left = `${Math.random() * 100}%`;
+                el.style.animationDelay = `${Math.random() * 15}s`;
+                el.style.animationDuration = `${10 + Math.random() * 10}s`;
+                container.appendChild(el);
+            }
+        }
+
+        // Screen Navigation (Direct)
+        function showScreenDirect(id) {
+            document.querySelectorAll('.screen-panel').forEach(panel => {
+                panel.classList.add('hidden');
+                panel.classList.remove('flex');
+            });
+            const target = document.getElementById(id);
+            target.classList.remove('hidden');
+            if(id === 'screen-main') {
+                target.classList.add('block');
+            } else {
+                target.classList.add('flex');
+            }
+        }
+
+        // Rose-Transitioned Screen Navigation
+        function navigateTo(screenId) {
+            triggerRoseTransition(() => {
+                showScreenDirect(screenId);
+            });
+        }
+
+        // 6-Digit Passcode Logic
+        function updatePasscodeUI() {
+            dots.forEach((dot, index) => {
+                if (index < passcode.length) {
+                    dot.classList.remove('border-pink-400');
+                    dot.classList.add('bg-pink-400', 'scale-110');
+                } else {
+                    dot.classList.remove('bg-pink-400', 'scale-110');
+                    dot.classList.add('border-pink-400');
+                }
+            });
+        }
+
+        function pressKey(num) {
+            forcePlayMusic();
+            if (passcode.length < 6) {
+                passcode += num;
+                updatePasscodeUI();
+                
+                if (passcode.length === 6) {
+                    if (passcode === targetPasscode) {
+                        setTimeout(() => {
+                            navigateTo('screen-gift');
+                        }, 250);
+                    } else {
+                        // Wrong PIN feedback: shake effect & reset
+                        setTimeout(() => {
+                            const container = document.getElementById('passcode-container');
+                            container.classList.add('animate-shake');
+                            
+                            // Reset state
+                            passcode = '';
+                            updatePasscodeUI();
+                            
+                            setTimeout(() => {
+                                container.classList.remove('animate-shake');
+                            }, 500);
+                        }, 250);
+                    }
+                }
+            }
+        }
+
+        function clearKey() {
+            forcePlayMusic();
+            passcode = '';
+            updatePasscodeUI();
+        }
+
+        // Audio Player Logic yang lebih kuat
+        let isMusicPlaying = false;
+        function forcePlayMusic() {
+            if (isMusicPlaying) return;
+            const bgMusic = document.getElementById('bgMusic');
+            if (bgMusic) {
+                bgMusic.volume = 0.8; // Mengatur volume
+                bgMusic.play().then(() => {
+                    isMusicPlaying = true;
+                }).catch(e => console.log("Menunggu interaksi pengguna untuk memutar musik:", e));
+            }
+        }
+
+        // Gift Box opening transition
+        function openGift() {
+            navigateTo('screen-transition');
+            
+            const burstCenter = document.getElementById('burst-center');
+            const light = document.getElementById('light-burst');
+            
+            setTimeout(() => {
+                light.classList.remove('opacity-0');
+                light.classList.add('opacity-100', 'scale-[5]');
+            }, 100);
+
+            // Pop active particle elements
+            const colors = ['#f43f5e', '#fb7185', '#fda4af', '#ffffff'];
+            for(let i=0; i<35; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 50 + Math.random() * 150;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+                
+                p.style.left = '50%';
+                p.style.top = '50%';
+                
+                p.animate([
+                    { transform: `translate(-50%, -50%) scale(1)`, opacity: 1 },
+                    { transform: `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(0)`, opacity: 0 }
+                ], {
+                    duration: 1200 + Math.random() * 800,
+                    easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+                    fill: 'forwards'
+                });
+                burstCenter.appendChild(p);
+            }
+
+            setTimeout(() => {
+                navigateTo('screen-main');
+            }, 2500);
+        }
+
+        // Bouquet Message Modals
+        const modal = document.getElementById('popup-modal');
+        const modalContent = document.getElementById('popup-content');
+        
+        function showFlowerPopup(type) {
+            const data = flowerMessages[type];
+            document.getElementById('popup-icon').innerText = data.icon;
+            document.getElementById('popup-text').innerText = data.text;
+            
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modalContent.classList.remove('scale-95');
+            modalContent.classList.add('scale-100');
+        }
+
+        function closePopup() {
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+        }
+
+        window.onload = () => {
+            initBackgroundFlowers();
+            window.addEventListener('resize', resizeCanvas);
+            
+            // Auto transition to passcode after loading screen
+            setTimeout(() => {
+                navigateTo('screen-passcode');
+            }, 3000);
+        };
+    </script>
+</body>
+</html>
